@@ -31,3 +31,11 @@ public static int getInt(ContentResolver cr, String name, int def) {
     }
 }
 ```
+Tại sao cách này hiệu quả?
+Chặn ở tầng cao: Hầu hết các thư viện bảo mật của App ngân hàng đều gọi Settings.Global.getInt(resolver, "adb_enabled", 0). Khi bạn sửa ở đây, hàm sẽ trả về 0 ngay lập tức mà không cần quan tâm giá trị thực trong database là gì.
+
+Phân biệt đối tượng: Việc kiểm tra callingUid > 2000 rất quan trọng.
+
+UID <= 2000: Bao gồm System, Phone, Shell (ADB), Root. Những thành phần này cần giá trị thật để hệ thống không bị lỗi.
+
+UID > 2000: Hầu hết là ứng dụng người dùng cài đặt. Nhóm này sẽ bị nhận giá trị giả.
